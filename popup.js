@@ -17,7 +17,6 @@ changeColor.onclick = function(element) {
         allFrames: false, // this is the default
         runAt: 'document_start', // default is document_idle. See https://stackoverflow.com/q/42509273 for more details.
         }, function(results) {
-        console.log(results);
           // results.length must be 1
           var result = results[0].trim();
 
