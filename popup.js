@@ -27,7 +27,12 @@ changeColor.onclick = function(element) {
             runAt: 'document_start', // default is document_idle. See https://stackoverflow.com/q/42509273 for more details.
             }, function(results) {
               // results.length must be 1
-              result += ", [" + results[0] + "] ";
+              if(!(results[0] === "")) {
+                result += ", [" + results[0] + "] ";
+              }
+              else {
+                result += ", ";
+              }
 
               chrome.tabs.executeScript(null, {
                 code: meaning,
