@@ -1,7 +1,7 @@
 {
-  "name": "Getting Started Example",
+  "name": "Jisho CSV Extension",
   "version": "1.0",
-  "description": "Build an Extension!",
+  "description": "Copy Jisho results with the click of a button!",
   "permissions": ["activeTab", "declarativeContent", "storage"],
   "background": {
     "scripts": ["background.js"],
