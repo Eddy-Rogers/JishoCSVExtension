@@ -52,14 +52,23 @@ changeColor.onclick = function(element) {
     });
   };
 
-// TODO :: I know this is a meme but there has to be a better way to do this.
 // Look into searching by element class name after getting the div 'primary'
-const kanji = `document.getElementById("primary").children[0].children[1].children[0].children[0].children[0].children[1].textContent`
-const furigana = `var spanList = document.getElementById("primary").children[0].children[1].children[0].children[0].children[0].children[0];
-                  var result = "";
-                  for (var i = 0; i < spanList.children.length; i++) {
-                    result += spanList.children[i].textContent;
+const furigana =
+`                  // furigana is stored as a separate span for each kanji
+                  let furiganaSpans = document.querySelector("#primary .exact_block .furigana").children;
+                  // okurigana show up in the word as individual spans, while the kanji are just floating. Makes my life easier 
+                  let okuriganaSpans = document.querySelector("#primary .exact_block .text").children;
+                  let oCount = 0;
+                  let result = "";
+                  for (const f of furiganaSpans) {
+                    // okurigana don't have furigana but there needs to be a space for it anyway, which shows up as an empty span.
+                    if (f.textContent === ""){
+                      result += okuriganaSpans[oCount++].textContent;
+                    } else {
+                      result += f.textContent;
+                    }
                   } result;`
+const kanji = `document.querySelector("#primary .text").textContent;`
 
 // TODO :: Get all of the meanings and separate them?
-const meaning = `document.getElementById("primary").children[0].children[1].children[1].children[0].children[1].children[0].children[1].textContent`
+const meaning = `document.querySelector("#primary .meaning-meaning").textContent`
