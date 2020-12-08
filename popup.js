@@ -13,7 +13,7 @@ changeColor.onclick = function(element) {
 
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
       chrome.tabs.executeScript(null, {
-        code: kanji,
+        code: kanji1,
         allFrames: false, // this is the default
         runAt: 'document_start', // default is document_idle. See https://stackoverflow.com/q/42509273 for more details.
         }, function(results) {
@@ -51,6 +51,8 @@ changeColor.onclick = function(element) {
         });
     });
   };
+
+kanji1 = '$("#primary .concept_light-representation").children[1]'
 
 // TODO :: I know this is a meme but there has to be a better way to do this.
 // Look into searching by element class name after getting the div 'primary'
