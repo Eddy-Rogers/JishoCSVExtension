@@ -41,7 +41,7 @@ changeColor.onclick = function(element) {
                 }, function(results) {
                   // results.length must be 1
                   result += results[0];
-                    navigator.clipboard.writeText(result).then(() => {
+                    navigator.clipboard.writeText(result + "\n").then(() => {
                         //clipboard successfully set
                       }, () => {
                         //clipboard write failed, use fallback
@@ -56,7 +56,7 @@ changeColor.onclick = function(element) {
 const furigana =
 `                  // furigana is stored as a separate span for each kanji
                   let furiganaSpans = document.querySelector("#primary .exact_block .furigana").children;
-                  // okurigana show up in the word as individual spans, while the kanji are just floating. Makes my life easier 
+                  // okurigana show up in the word as individual spans, while the kanji are just floating. Makes my life easier
                   let okuriganaSpans = document.querySelector("#primary .exact_block .text").children;
                   let oCount = 0;
                   let result = "";
