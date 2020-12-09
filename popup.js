@@ -71,4 +71,4 @@ const furigana =
 const kanji = `document.querySelector("#primary .text").textContent;`
 
 // TODO :: Get all of the meanings and separate them?
-const meaning = `document.querySelector("#primary .meaning-meaning").textContent`
+const meaning = `document.querySelector("#primary .meaning-meaning, #primary .meaning-definition").textContent`
