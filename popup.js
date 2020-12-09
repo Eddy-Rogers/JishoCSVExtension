@@ -54,15 +54,15 @@ changeColor.onclick = function(element) {
 
 // Look into searching by element class name after getting the div 'primary'
 const furigana =
-`                  // furigana is stored as a separate span for each kanji
-                  let furiganaSpans = document.querySelector("#primary .exact_block .furigana").children;
+ `             // furigana is stored as a separate span for each kanji
+                  let furiganaSpans = document.querySelector("#primary .furigana").children;
                   // okurigana show up in the word as individual spans, while the kanji are just floating. Makes my life easier
-                  let okuriganaSpans = document.querySelector("#primary .exact_block .text").children;
+                  let okuriganaSpans = document.querySelector("#primary .text").children;
                   let oCount = 0;
                   let result = "";
                   for (const f of furiganaSpans) {
                     // okurigana don't have furigana but there needs to be a space for it anyway, which shows up as an empty span.
-                    if (f.textContent === ""){
+                    if (f.textContent === "" && oCount < okuriganaSpans.length){
                       result += okuriganaSpans[oCount++].textContent;
                     } else {
                       result += f.textContent;
@@ -71,4 +71,4 @@ const furigana =
 const kanji = `document.querySelector("#primary .text").textContent;`
 
 // TODO :: Get all of the meanings and separate them?
-const meaning = `document.querySelector("#primary .meaning-meaning, #primary .meaning-definition").textContent`
+const meaning = `document.querySelector("#primary .meaning-meaning").textContent`
