@@ -54,8 +54,13 @@ changeColor.onclick = function(element) {
 
 // Look into searching by element class name after getting the div 'primary'
 const furigana =
- `             // furigana is stored as a separate span for each kanji
-                  let furiganaSpans = document.querySelector("#primary .furigana").children;
+`             // furigana is stored as a separate span for each kanji
+                  // **SPECIAL CASE** Apparently sometimes jisho uses ruby to store the furigana, and also includes kanji?? Why
+                  let furiganaSpans = [];
+                  furiganaSpans[0] =  document.querySelector("#primary .furigana rt");
+                  if (furiganaSpans === []) {
+                    let furiganaSpans = document.querySelector("#primary .furigana").children;
+                  }
                   // okurigana show up in the word as individual spans, while the kanji are just floating. Makes my life easier
                   let okuriganaSpans = document.querySelector("#primary .text").children;
                   let oCount = 0;
