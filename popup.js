@@ -1,13 +1,12 @@
-let changeColor = document.getElementById('changeColor');
+let saveResult = document.getElementById("changeColor");
 
 chrome.storage.sync.get('color', function(data) {
-  changeColor.style.backgroundColor = data.color;
-  changeColor.setAttribute('value', data.color);
+  saveResult.style.backgroundColor = data.color;
+  saveResult.setAttribute('value', data.color);
 });
 
-changeColor.onclick = function(element) {
-    var csvResult
-    let color = element.target.value;
+saveResult.addEventListener("click",function() {
+    // let color = element.target.value;
 
     // TODO :: Can we separate these queries?
 
@@ -40,18 +39,24 @@ changeColor.onclick = function(element) {
                 runAt: 'document_start', // default is document_idle. See https://stackoverflow.com/q/42509273 for more details.
                 }, function(results) {
                   // results.length must be 1
-                  result += results[0];
-                    navigator.clipboard.writeText(result + "\n").then(() => {
-                        //clipboard successfully set
-                      }, () => {
-                        //clipboard write failed, use fallback
-                      });
+                  result += results[0] + "\n";
+                  let storedResults = window.localStorage.getItem("results");
+                  if (storedResults === null) {
+                    storedResults = "";
+                  }
+                  window.localStorage.setItem("results", window.localStorage.getItem("results") + result);
                   });
             });
         });
     });
-  };
+  });
 
+let sendToClip = document.getElementById("sendToClip");
+sendToClip.addEventListener("click", function(){
+  let results = (window.localStorage.getItem("results"));
+  window.localStorage.setItem("results", "");
+  navigator.clipboard.writeText(results + "\n").then(() => {}, () => {});
+});
 // Look into searching by element class name after getting the div 'primary'
 const furigana =
 `                  // array of spans, each containing either a section of the furigana or nothing (in case of a okurigana in the original word)
