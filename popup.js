@@ -17,9 +17,11 @@ saveResult.addEventListener("click",function() {
         runAt: 'document_start', // default is document_idle. See https://stackoverflow.com/q/42509273 for more details.
         }, function(results) {
           // results.length must be 1
-          var result = results[0].trim();
+        let result = results[0].trim();
+        // Key for dictionary
+        let key = result;
 
-          chrome.tabs.executeScript(null, {
+        chrome.tabs.executeScript(null, {
             // TODO :: What should happen here if no furigana are available? What about if there are okurigana?
             code: furigana,
             allFrames: false, // this is the default
@@ -40,11 +42,12 @@ saveResult.addEventListener("click",function() {
                 }, function(results) {
                   // results.length must be 1
                   result += results[0] + "\n";
-                  let storedResults = window.localStorage.getItem("results");
+                  let storedResults = JSON.parse(window.localStorage.getItem("results"));
                   if (storedResults === null) {
-                    storedResults = "";
+                    storedResults = {};
                   }
-                  window.localStorage.setItem("results", window.localStorage.getItem("results") + result);
+                  storedResults[key] = result;
+                  window.localStorage.setItem("results", JSON.stringify(storedResults));
                   });
             });
         });
@@ -53,9 +56,17 @@ saveResult.addEventListener("click",function() {
 
 let sendToClip = document.getElementById("sendToClip");
 sendToClip.addEventListener("click", function(){
-  let results = (window.localStorage.getItem("results"));
-  window.localStorage.setItem("results", "");
-  navigator.clipboard.writeText(results + "\n").then(() => {}, () => {});
+  let results = JSON.parse(window.localStorage.getItem("results"));
+  let resultString = "";
+  for (const key in results){
+    // skip prototype keys
+    if (!results.hasOwnProperty(key)) continue;
+    resultString += results[key];
+  }
+
+  // clearing saved buffer
+  window.localStorage.setItem("results", JSON.stringify({}));
+  navigator.clipboard.writeText(resultString).then(() => {}, () => {});
 });
 // Look into searching by element class name after getting the div 'primary'
 const furigana =
