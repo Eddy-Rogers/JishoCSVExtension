@@ -1,18 +1,22 @@
 <!DOCTYPE html>
- <html>
+ <html lang="en">
    <head>
      <link rel="stylesheet" href="popup.css">
-     <style>
-       button {
-         height: 40px;
-         width: 120px;
-         outline: none;
-       }
-     </style>
+     <title>JishoCVS Extension</title>
    </head>
    <body>
-     <button class="copyButton" id="changeColor">Copy Result</button>
-     <button class="copyButton" id="sendToClip"> Save Results</button>
-     <script src="popup.js"></script>
+    <div class="container">
+
+        <form class="Buttons">
+            <button class="Button" id="changeColor">Copy Result</button>
+            <button class="Button" id="sendToClip"> Save Results</button>
+        </form>
+      <ul class="currentQueue">
+        <li>Item 1</li>
+        <li>Item 2</li>
+      </ul>
+    </div>
+
+    <script src="popup.js"></script>
    </body>
  </html>
