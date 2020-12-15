@@ -1,6 +1,5 @@
-
 // Making sure all content is loaded before we try to do anything with the extension
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
 
     updateList();
     let saveResult = document.getElementById("changeColor");
@@ -56,7 +55,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     });
-
 
 
     let sendToClip = document.getElementById("sendToClip");
