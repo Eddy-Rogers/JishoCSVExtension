@@ -13,6 +13,7 @@ html {
     grid-column: 1/2;
     background-color: #dddddd;
 
+
 }
 
 .Button {
@@ -44,6 +45,8 @@ html {
 }
 
 #currentQueue {
+    height: 120px;
+    overflow: auto;
     grid-column: 2/3;
     background-color: #dddddd;
     margin: 0;
