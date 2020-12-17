@@ -16,6 +16,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 runAt: 'document_start', // default is document_idle. See https://stackoverflow.com/q/42509273 for more details.
             }, function (results) {
 
+
+                // If on a page of jisho with no definitions, can't do anything
+                if (results[0] === null) {
+                    return;
+                }
                 // results.length must be 1
                 definition.kanji = results[0].trim();
 
@@ -109,6 +114,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // TODO :: Get all of the meanings and separate them?
     const meaning = `document.querySelector("#primary .meaning-meaning").textContent`
+
 });
 
 /**
