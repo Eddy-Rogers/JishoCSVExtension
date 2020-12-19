@@ -1,60 +1,91 @@
-let changeColor = document.getElementById('changeColor');
+// Making sure all content is loaded before we try to do anything with the extension
+document.addEventListener('DOMContentLoaded', function () {
 
-chrome.storage.sync.get('color', function(data) {
-  changeColor.style.backgroundColor = data.color;
-  changeColor.setAttribute('value', data.color);
-});
+    updateList();
+    let saveResult = document.getElementById("changeColor");
 
-changeColor.onclick = function(element) {
-    var csvResult
-    let color = element.target.value;
+    saveResult.addEventListener("click", function () {
 
-    // TODO :: Can we separate these queries?
+        // TODO :: Can we separate these queries?
+        let definition = {}
 
-    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-      chrome.tabs.executeScript(null, {
-        code: kanji,
-        allFrames: false, // this is the default
-        runAt: 'document_start', // default is document_idle. See https://stackoverflow.com/q/42509273 for more details.
-        }, function(results) {
-          // results.length must be 1
-          var result = results[0].trim();
-
-          chrome.tabs.executeScript(null, {
-            // TODO :: What should happen here if no furigana are available? What about if there are okurigana?
-            code: furigana,
-            allFrames: false, // this is the default
-            runAt: 'document_start', // default is document_idle. See https://stackoverflow.com/q/42509273 for more details.
-            }, function(results) {
-              // results.length must be 1
-              if(!(results[0] === "" || results[0] == null)) {
-                result += ", [" + results[0] + "] ";
-              }
-              else {
-                result += ", ";
-              }
-
-              chrome.tabs.executeScript(null, {
-                code: meaning,
+        chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
+            chrome.tabs.executeScript(null, {
+                code: kanji,
                 allFrames: false, // this is the default
                 runAt: 'document_start', // default is document_idle. See https://stackoverflow.com/q/42509273 for more details.
-                }, function(results) {
-                  // results.length must be 1
-                  result += results[0];
-                    navigator.clipboard.writeText(result + "\n").then(() => {
-                        //clipboard successfully set
-                      }, () => {
-                        //clipboard write failed, use fallback
-                      });
-                  });
+            }, function (results) {
+
+
+                // If on a page of jisho with no definitions, can't do anything
+                if (results[0] === null) {
+                    return;
+                }
+                // results.length must be 1
+                definition.kanji = results[0].trim();
+
+
+                chrome.tabs.executeScript(null, {
+                    // TODO :: What should happen here if no furigana are available? What about if there are okurigana?
+                    code: furigana,
+                    allFrames: false, // this is the default
+                    runAt: 'document_start', // default is document_idle. See https://stackoverflow.com/q/42509273 for more details.
+                }, function (results) {
+                    // results.length must be 1
+                    if (!(results[0] === "" || results[0] == null)) {
+                        definition.furigana = results[0];
+                    } else {
+                        definition.furigana = "";
+                    }
+
+                    chrome.tabs.executeScript(null, {
+                        code: meaning,
+                        allFrames: false, // this is the default
+                        runAt: 'document_start', // default is document_idle. See https://stackoverflow.com/q/42509273 for more details.
+                    }, function (results) {
+                        // results.length must be 1
+                        definition.meaning = results[0];
+
+                        //storedResults is a JS object containing subobjects for every definition
+                        let storedResults = JSON.parse(window.localStorage.getItem("results"));
+                        if (storedResults === null) {
+                            storedResults = {};
+                        }
+                        storedResults[definition.kanji] = definition;
+                        window.localStorage.setItem("results", JSON.stringify(storedResults));
+                        updateList();
+
+                    });
+                });
             });
         });
     });
-  };
 
+
+    let sendToClip = document.getElementById("sendToClip");
+    sendToClip.addEventListener("click", function () {
+        let results = JSON.parse(window.localStorage.getItem("results"));
+        let resultString = "";
+        for (const key in results) {
+            // skip prototype keys
+            if (!results.hasOwnProperty(key)) continue;
+            let definition = results[key];
+            resultString += definitionString(definition) + "\n";
+
+        }
+        navigator.clipboard.writeText(resultString).then(() => {
+        }, () => {
+        });
+
+        // clearing saved buffer
+        window.localStorage.setItem("results", JSON.stringify({}));
+        // clear list in extension window
+        updateList();
+
+    });
 // Look into searching by element class name after getting the div 'primary'
-const furigana =
-`                  // array of spans, each containing either a section of the furigana or nothing (in case of a okurigana in the original word)
+    const furigana =
+        `                  // array of spans, each containing either a section of the furigana or nothing (in case of a okurigana in the original word)
                   let furiganaSpans = [];
                   // **SPECIAL CASE** Apparently sometimes jisho uses ruby to store the furigana, and also includes kanji?? Why
                   furiganaSpans[0] =  document.querySelector("#primary .furigana rt");
@@ -79,7 +110,33 @@ const furigana =
                       result += f.textContent;
                     }
                   } result;`
-const kanji = `document.querySelector("#primary .text").textContent;`
+    const kanji = `document.querySelector("#primary .text").textContent;`
 
 // TODO :: Get all of the meanings and separate them?
-const meaning = `document.querySelector("#primary .meaning-meaning").textContent`
+    const meaning = `document.querySelector("#primary .meaning-meaning").textContent`
+
+});
+
+/**
+ * Updates the list of items in the queue
+ */
+function updateList() {
+    let results = JSON.parse(window.localStorage.getItem("results"));
+    // clearing current list
+    document.getElementById("currentQueue").innerHTML = "";
+    for (const key in results) {
+        // skip prototype keys
+        if (!results.hasOwnProperty(key)) continue;
+        let definition = results[key];
+        let templi = document.createElement("li");
+        templi.textContent = definitionString(definition);
+        document.getElementById("currentQueue").appendChild(templi);
+    }
+
+
+}
+
+function definitionString(definition) {
+    return definition.kanji + ", [" + definition.furigana + "] " + definition.meaning;
+}
+
